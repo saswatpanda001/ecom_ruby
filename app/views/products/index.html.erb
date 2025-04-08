@@ -1,0 +1,74 @@
+<nav class="bg-blue-600 text-white p-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    
+    <!-- Logo -->
+    <a href="/" class="text-2xl font-bold">MyShop</a>
+
+    <!-- Navigation Links -->
+    <ul class="hidden md:flex space-x-6">
+      <li><a href="/" class="hover:text-gray-300">Home</a></li>
+      <li><a href="/products" class="hover:text-gray-300">Products</a></li>
+      <li><a href="/about" class="hover:text-gray-300">About</a></li>
+      <li><a href="/cart" class="hover:text-gray-300">Cart</a></li>
+    </ul>
+
+    <!-- Mobile Menu Button -->
+    <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+      ☰
+    </button>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden absolute top-16 left-0 w-full bg-blue-600 text-white text-center md:hidden">
+      <a href="/" class="block py-2">Home</a>
+      <a href="/products" class="block py-2">Products</a>
+      <a href="/about" class="block py-2">About</a>
+      <a href="/cart" class="block py-2">Cart</a>
+    </div>
+
+  </div>
+</nav>
+
+<script>
+  document.getElementById('menu-btn').addEventListener('click', function () {
+    document.getElementById('mobile-menu').classList.toggle('hidden');
+  });
+</script>
+
+
+<div class="container mx-auto p-6">
+  <!-- Search & Filter -->
+  <div class="flex justify-between items-center mb-6">
+    <form action="<%= products_path %>" method="get" class="flex space-x-2">
+      <input type="text" name="search" placeholder="Search products..." class="border p-2 rounded w-64" value="<%= params[:search] %>">
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Search</button>
+    </form>
+
+    <form action="<%= products_path %>" method="get">
+      <select name="category_id" class="border p-2 rounded" onchange="this.form.submit()">
+        <option value="">All Categories</option>
+        <% @categories.each do |category| %>
+          <option value="<%= category.id %>" <%= 'selected' if params[:category_id].to_i == category.id %>>
+            <%= category.name %>
+          </option>
+        <% end %>
+      </select>
+    </form>
+  </div>
+
+  <!-- Product Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <% @products.each do |product| %>
+      <div class="bg-white shadow-lg rounded-lg p-4">
+        <h3 class="text-lg font-semibold"><%= product.title %></h3>
+        <p class="text-gray-600"><%= truncate(product.description, length: 80) %></p>
+        <p class="text-blue-600 font-bold mt-2">$<%= product.price %></p>
+        <a href="<%= product_path(product) %>" class="block mt-4 bg-indigo-500 text-white text-center py-2 rounded">View Details</a>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-6 flex justify-center">
+  <%= paginate @products %>
+</div>
+
+</div>

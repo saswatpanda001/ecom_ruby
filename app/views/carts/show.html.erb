@@ -1,0 +1,160 @@
+<nav class="bg-blue-600 text-white p-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    
+    <!-- Logo -->
+    <a href="/" class="text-2xl font-bold">MyShop</a>
+
+    <!-- Navigation Links -->
+    <ul class="hidden md:flex space-x-6">
+      <li><a href="/" class="hover:text-gray-300">Home</a></li>
+      <li><a href="/products" class="hover:text-gray-300">Products</a></li>
+      <li><a href="/about" class="hover:text-gray-300">About</a></li>
+      <li><a href="/cart" class="hover:text-gray-300">Cart</a></li>
+    </ul>
+
+    <!-- Mobile Menu Button -->
+    <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+      ☰
+    </button>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden absolute top-16 left-0 w-full bg-blue-600 text-white text-center md:hidden">
+      <a href="/" class="block py-2">Home</a>
+      <a href="/products" class="block py-2">Products</a>
+      <a href="/about" class="block py-2">About</a>
+      <a href="/cart" class="block py-2">Cart</a>
+    </div>
+
+  </div>
+</nav>
+
+
+<div class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-4">Shopping Cart</h1>
+
+  <% if @cart_items.any? %>
+    <div class="bg-white shadow-lg rounded-lg p-6">
+      <div id="cart-items">
+        <% @products.each do |product| %>
+          <div class="flex items-center justify-between border-b py-4" data-product-id="<%= product.id %>">
+            <div class="flex items-center space-x-4">
+              <img src="<%= product.image %>" alt="<%= product.title %>" class="w-16 h-16 rounded">
+              <div>
+                <h2 class="text-lg font-bold"><%= product.title %></h2>
+                <p class="text-gray-600">$<%= product.price %></p>
+              </div>
+            </div>
+
+            <!-- Update Quantity -->
+            <form action="<%= update_cart_path(product) %>" method="post" class="flex items-center space-x-2 update-form">
+              <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+              <input type="number" name="quantity" value="<%= @cart_items[product.id.to_s] %>" min="1"
+                class="w-16 border p-2 rounded text-center quantity-input"
+                data-price="<%= product.price %>" data-product-id="<%= product.id %>">
+              
+              <p class="text-lg font-semibold text-gray-800">$<span class="item-total"><%= product.price * @cart_items[product.id.to_s] %></span></p>
+
+              <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Update</button>
+            </form>
+
+            <!-- Remove Item -->
+            <a href="<%= remove_from_cart_path(product) %>"
+              class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 remove-btn"
+              data-product-id="<%= product.id %>">
+              Remove
+            </a>
+
+
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Grand Total -->
+      <div class="flex justify-between mt-6 text-xl font-bold">
+        <p>Total Amount:</p>
+        <p>$<span id="grand-total">0.00</span></p>
+      </div>
+
+      <!-- Checkout Button -->
+      <div class="mt-6 flex justify-end">
+        <a href="/checkout" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">Checkout</a>
+      </div>
+    </div>
+  <% else %>
+    <p class="text-gray-500">Your cart is empty.</p>
+  <% end %>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+  function updateTotal() {
+    let grandTotal = 0;
+
+    document.querySelectorAll(".update-form").forEach(form => {
+      let quantityInput = form.querySelector(".quantity-input");
+      let itemTotalElement = form.querySelector(".item-total");
+      let price = parseFloat(quantityInput.getAttribute("data-price"));
+      let quantity = parseInt(quantityInput.value) || 1;
+
+      let itemTotal = price * quantity;
+      itemTotalElement.textContent = itemTotal.toFixed(2);
+
+      grandTotal += itemTotal;
+      
+      
+    });
+
+    document.getElementById("grand-total").textContent = grandTotal.toFixed(2);
+  }
+  // Update total on page load
+  updateTotal();
+
+
+
+  // Update total when quantity changes
+  document.querySelectorAll(".quantity-input").forEach(input => {
+    input.addEventListener("input", updateTotal);
+  });
+
+  // Prevent zero or negative quantity submission
+  document.querySelectorAll(".update-form").forEach(form => {
+    
+  form.addEventListener("submit", function(event) {
+  let quantityInput = form.querySelector(".quantity-input");
+  let quantity = parseInt(quantityInput.value);
+  
+  if (quantity <= 0) {
+    event.preventDefault();
+    alert("Quantity must be at least 1.");
+  } else {
+    // Optional slight delay to allow server to process if needed
+    setTimeout(() => {
+      window.location.reload();
+    }, 200);
+  }
+});
+
+  });
+
+  // Handle remove button click
+  document.querySelectorAll(".remove-btn").forEach(button => {
+    button.addEventListener("click", function(event) {
+      event.preventDefault();
+
+      let productRow = this.closest("[data-product-id]");
+      let productId = productRow.getAttribute("data-product-id");
+
+      fetch(`/cart/remove/${productId}`, { method: "DELETE" })
+        .then(() => {
+          productRow.remove();  // Remove item from DOM
+          updateTotal();  // Recalculate total
+          window.location.reload();
+        })
+        .catch(error => console.error("Error removing item:", error));
+    });
+  });
+});
+
+
+</script>
+

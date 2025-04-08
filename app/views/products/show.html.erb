@@ -1,0 +1,61 @@
+<nav class="bg-blue-600 text-white p-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    
+    <!-- Logo -->
+    <a href="/" class="text-2xl font-bold">MyShop</a>
+
+    <!-- Navigation Links -->
+    <ul class="hidden md:flex space-x-6">
+      <li><a href="/" class="hover:text-gray-300">Home</a></li>
+      <li><a href="/products" class="hover:text-gray-300">Products</a></li>
+      <li><a href="/about" class="hover:text-gray-300">About</a></li>
+      <li><a href="/cart" class="hover:text-gray-300">Cart</a></li>
+    </ul>
+
+    <!-- Mobile Menu Button -->
+    <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+      ☰
+    </button>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden absolute top-16 left-0 w-full bg-blue-600 text-white text-center md:hidden">
+      <a href="/" class="block py-2">Home</a>
+      <a href="/products" class="block py-2">Products</a>
+      <a href="/about" class="block py-2">About</a>
+      <a href="/cart" class="block py-2">Cart</a>
+    </div>
+
+  </div>
+</nav>
+
+<script>
+  document.getElementById('menu-btn').addEventListener('click', function () {
+    document.getElementById('mobile-menu').classList.toggle('hidden');
+  });
+</script>
+
+
+<div class="container mx-auto p-6">
+  <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
+    
+    <!-- Product Info -->
+    <h1 class="text-3xl font-bold"><%= @product.title %></h1>
+    <p class="text-gray-600 mt-2"><%= @product.description %></p>
+    <p class="text-green-600 font-bold text-xl mt-4">$<%= @product.price %></p>
+    
+    <!-- Quantity Selector & Add to Cart -->
+    <form action="<%= add_to_cart_path(@product) %>" method="post" class="mt-6 flex space-x-2">
+      <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+      <input type="number" name="quantity" min="1" value="1" class="w-16 border p-2 rounded text-center">
+      
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Add to Cart
+      </button>
+    </form>
+
+    <!-- Back to Products -->
+    <a href="<%= products_path %>" class="inline-block mt-6 bg-gray-400 text-white px-4 py-2 rounded">Back to Products</a>
+
+  </div>
+</div>
+
