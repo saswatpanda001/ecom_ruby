@@ -1,0 +1,52 @@
+<%= form_with(model: [:admin, @product], local: true, html: { multipart: true }, class: "max-w-xl mx-auto bg-white p-6 rounded shadow-md space-y-6") do |f| %>
+    <% if @product.errors.any? %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <strong class="font-bold">Please fix the following errors:</strong>
+        <ul class="mt-2 list-disc list-inside">
+          <% @product.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  
+    <div>
+      <%= f.label :title, class: "block text-gray-700 font-semibold mb-1" %>
+      <%= f.text_field :title, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500" %>
+    </div>
+  
+    <div>
+      <%= f.label :price, class: "block text-gray-700 font-semibold mb-1" %>
+      <%= f.number_field :price, step: 0.01, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500" %>
+    </div>
+  
+    <div>
+      <%= f.label :description, class: "block text-gray-700 font-semibold mb-1" %>
+      <%= f.text_area :description, rows: 4, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500" %>
+    </div>
+  
+    <div>
+      <%= f.label :stock, class: "block text-gray-700 font-semibold mb-1" %>
+      <%= f.number_field :stock, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500" %>
+    </div>
+  
+    <div>
+      <%= f.label :image, class: "block text-gray-700 font-semibold mb-1" %>
+      <%= f.file_field :image, class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" %>
+    </div>
+  
+    <div class="flex items-center space-x-2">
+      <%= f.check_box :on_sale, class: "form-checkbox h-5 w-5 text-blue-600" %>
+      <%= f.label :on_sale, class: "text-gray-700 font-medium" %>
+    </div>
+  
+    <div>
+      <%= f.label :category_id, "Category", class: "block text-gray-700 font-semibold mb-1" %>
+      <%= f.collection_select :category_id, @categories, :id, :name, { prompt: "Select a category" }, class: "w-full border border-gray-300 rounded px-3 py-2 bg-white focus:outline-none focus:ring focus:border-blue-500" %>
+    </div>
+  
+    <div>
+      <%= f.submit "Save Product", class: "w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-200" %>
+    </div>
+  <% end %>
+  

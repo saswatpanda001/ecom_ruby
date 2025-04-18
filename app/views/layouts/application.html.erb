@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -25,8 +26,26 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
+  <body class="bg-gray-100 text-gray-900">
+  <header class=" bg-white shadow">
+   
+  </header>
 
-  <body>
+  <main>
+    <% if flash[:notice] %>
+      <div class="bg-green-100 text-green-800 p-2 rounded mb-4"><%= flash[:notice] %></div>
+    <% end %>
+    <% if flash[:alert] %>
+      <div class="bg-red-100 text-red-800 p-2 rounded mb-4"><%= flash[:alert] %></div>
+    <% end %>
+
     <%= yield %>
-  </body>
+  </main>
+
+  <footer class="mt-16 text-center text-sm text-gray-600">
+    &copy; <%= Time.current.year %> Ecommerce App
+  </footer>
+</body>
+
+
 </html>

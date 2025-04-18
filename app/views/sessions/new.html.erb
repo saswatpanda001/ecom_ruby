@@ -22,34 +22,30 @@
     </div>
   </div>
 </nav>
-<script>
-  document.getElementById('menu-btn').addEventListener('click', function () {
-    document.getElementById('mobile-menu').classList.toggle('hidden');
-  });
-</script>
 
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <h1 class="text-3xl font-semibold text-center text-blue-600 mb-6">Login</h1>
 
-<div class="container mx-auto p-6">
-  <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
-    
-    <!-- Product Info -->
-    <h1 class="text-3xl font-bold"><%= @product.title %></h1>
-    <p class="text-gray-600 mt-2"><%= @product.description %></p>
-    <p class="text-green-600 font-bold text-xl mt-4">$<%= @product.price %></p>
-    
-    <!-- Quantity Selector & Add to Cart -->
-    <form action="<%= add_to_cart_path(@product) %>" method="post" class="mt-6 flex space-x-2">
-      <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-      <input type="number" name="quantity" min="1" value="1" class="w-16 border p-2 rounded text-center">
-      
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        Add to Cart
-      </button>
-    </form>
+    <%= form_with url: login_path, method: :post, class: "space-y-4" do %>
+      <div>
+        <%= label_tag :email, "Email", class: "block text-sm font-medium text-gray-700" %>
+        <%= text_field_tag :email, nil, class: "mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
 
-    <!-- Back to Products -->
-    <a href="<%= products_path %>" class="inline-block mt-6 bg-gray-400 text-white px-4 py-2 rounded">Back to Products</a>
+      <div>
+        <%= label_tag :password, "Password", class: "block text-sm font-medium text-gray-700" %>
+        <%= password_field_tag :password, nil, class: "mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
 
+      <div>
+        <%= submit_tag "Login", class: "w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200" %>
+      </div>
+    <% end %>
+
+    <p class="mt-4 text-center text-sm text-gray-600">
+      Don't have an account?
+      <%= link_to "Signup", signup_path, class: "text-blue-600 hover:underline" %>
+    </p>
   </div>
 </div>
-

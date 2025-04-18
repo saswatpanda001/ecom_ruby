@@ -1,0 +1,57 @@
+<nav class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md py-4">
+  <div class="container mx-auto flex justify-between items-center px-4">
+    
+    <!-- Logo / Site name -->
+    <div class="text-2xl font-extrabold tracking-wide">
+      <%= link_to "Ecommerce", root_path, class: "hover:text-yellow-300 transition-colors duration-200" %>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="flex items-center space-x-6 text-sm md:text-base">
+      <% if user_signed_in? %>
+        <span class="font-medium">Hello, <%= current_user.username %></span>
+        <li><%= link_to 'Admin Products', admin_products_path %></li>
+        <li><%= link_to 'Add Product', new_admin_product_path%></li>
+       
+        <%= link_to "Logout", logout_path, method: :delete, data: { turbo_method: :delete }, class: "hover:underline hover:text-red-300" %>
+      <% else %>
+        <%= link_to "Login", login_path, class: "hover:underline hover:text-green-300" %>
+        <%= link_to "Signup", signup_path, class: "hover:underline hover:text-green-300" %>
+      <% end %>
+    </div>
+  </div>
+</nav>
+
+
+<div class="min-h-screen bg-gray-100 py-10 px-4">
+  <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+    <h1 class="text-4xl font-bold text-blue-600 mb-4">Admin Dashboard</h1>
+    <p class="text-lg text-gray-700 mb-6">Welcome, <span class="font-semibold"><%= current_user.username %></span>!</p>
+    
+    <hr class="my-6">
+
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Quick Links</h2>
+    
+    <ul class="space-y-3 text-blue-600">
+      
+        <li><%= link_to 'Admin Products', admin_products_path, class: "hover:underline hover:text-green-700" %></li>
+        <li><%= link_to 'Add Product', new_admin_product_path, class: "hover:underline hover:text-green-700" %></li>
+        <li><%= link_to 'Logout', logout_path, method: :delete, class: "hover:underline hover:text-red-600" %></li>
+    </ul>
+
+
+    <hr class="my-6">
+
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Stats</h2>
+    <ul class="grid grid-cols-2 gap-4 text-gray-700">
+      <li class="bg-gray-100 p-4 rounded shadow">
+        <span class="text-sm text-gray-500">Total Products</span>
+        <div class="text-xl font-bold"><%= Product.count %></div>
+      </li>
+      <li class="bg-gray-100 p-4 rounded shadow">
+        <span class="text-sm text-gray-500">Total Users</span>
+        <div class="text-xl font-bold"><%= User.count %></div>
+      </li>
+    </ul>
+  </div>
+</div>
