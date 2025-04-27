@@ -5,7 +5,10 @@ class SessionsController < ApplicationController
 
   def create
     user = User.find_by(email: params[:email])
-    
+  
+    puts "User from DB: #{user.inspect}"
+    puts "Password from form: #{params[:password]}"
+    puts "Password from DB: #{user&.password}"
   
     if user && user.password == params[:password]
       session[:user_id] = user.id
@@ -15,6 +18,7 @@ class SessionsController < ApplicationController
       render :new
     end
   end
+  
 
   def destroy
     session[:user_id] = nil

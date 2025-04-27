@@ -6,74 +6,92 @@
   });
 </script>
 
-
 <div class="container mx-auto p-6">
-<!-- Search & Filter -->
-<div class="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
-  <!-- Search -->
-  <form action="<%= products_path %>" method="get" class="flex space-x-2">
-    <input type="text" name="search" placeholder="Search products..." class="border p-2 rounded w-64" value="<%= params[:search] %>">
-    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Search</button>
-  </form>
+  <!-- Search & Filter -->
+  <div class="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
+    <!-- Search Form -->
+    <form action="<%= products_path %>" method="get" class="flex space-x-2">
+      <input type="text" name="search" placeholder="Search products..." 
+             class="border p-2 rounded w-64" value="<%= params[:search] %>">
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Search
+      </button>
+    </form>
 
-  <!-- Category Dropdown -->
-  <form action="<%= products_path %>" method="get">
-    <select name="category_id" class="border p-2 rounded" onchange="this.form.submit()">
-      <option value="">All Categories</option>
-      <% @categories.each do |category| %>
-        <option value="<%= category.id %>" <%= 'selected' if params[:category_id].to_i == category.id %>>
-          <%= category.name %>
-        </option>
+    <!-- Combined Filter Form -->
+    <form action="<%= products_path %>" method="get" class="flex space-x-2">
+      <!-- Category Dropdown -->
+      <select name="category_id" class="border p-2 rounded" onchange="this.form.submit()">
+        <option value="">All Categories</option>
+        <% @categories.each do |category| %>
+          <option value="<%= category.id %>" <%= 'selected' if params[:category_id].to_i == category.id %>>
+            <%= category.name %>
+          </option>
+        <% end %>
+      </select>
+
+      <!-- Status Dropdown -->
+      <select name="status" class="border p-2 rounded" onchange="this.form.submit()">
+        <option value="">All Statuses</option>
+        <option value="on_sale" <%= 'selected' if params[:status] == 'on_sale' %>>On Sale</option>
+        <option value="not_on_sale" <%= 'selected' if params[:status] == 'not_on_sale' %>>Not On Sale</option>
+        <option value="new" <%= 'selected' if params[:status] == 'new' %>>New Arrivals</option>
+      </select>
+
+      <!-- Preserve search parameter if it exists -->
+      <% if params[:search].present? %>
+        <input type="hidden" name="search" value="<%= params[:search] %>">
       <% end %>
-    </select>
-  </form>
-
-  <!-- On Sale Filter -->
- <% if params[:on_sale] == "true" %>
-  <!-- Show all products button -->
-  <form action="<%= products_path %>" method="get">
-    <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-all">
-      Show All Products
-    </button>
-  </form>
-<% else %>
-  <!-- Filter on-sale products -->
-  <form action="<%= products_path %>" method="get">
-    <input type="hidden" name="on_sale" value="true">
-    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-all">
-      On Sale Only
-    </button>
-  </form>
-<% end %>
-
-</div>
-
-
+    </form>
+  </div>
 
   <!-- Product Grid -->
   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-  <% @products.each do |product| %>
-    <div class="bg-white shadow-lg rounded-lg p-4 relative">
+    <% @products.each do |product| %>
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden relative hover:shadow-xl transition-shadow duration-300">
+        <!-- Product Image -->
+        <div class="h-48 bg-gray-100 flex items-center justify-center">
+          <% if product.image.attached? %>
+            <%= image_tag product.image, class: "h-full w-full object-cover", alt: product.title %>
+          <% else %>
+            <div class="text-gray-400 text-center p-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <p>No image available</p>
+            </div>
+          <% end %>
+        </div>
 
-      <% if product.on_sale %>
-        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-          On Sale
-        </span>
-      <% end %>
+        <!-- Status Badge -->
+        <% if product.on_sale %>
+          <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+            On Sale
+          </span>
+        <% elsif product.created_at > 3.days.ago %>
+          <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
+            New
+          </span>
+        <% end %>
 
-      <h3 class="text-lg font-semibold"><%= product.title %></h3>
-      <p class="text-gray-600"><%= truncate(product.description, length: 80) %></p>
-      <p class="text-blue-600 font-bold mt-2">$<%= product.price %></p>
-      <a href="<%= product_path(product) %>" class="block mt-4 bg-indigo-500 text-white text-center py-2 rounded">
-        View Details
-      </a>
-    </div>
-  <% end %>
-</div>
+        <!-- Product Info -->
+        <div class="p-4">
+          <h3 class="text-lg font-semibold"><%= product.title %></h3>
+          <p class="text-gray-600 mb-2"><%= truncate(product.description, length: 80) %></p>
+          
+          <div class="flex justify-between items-center mt-4">
+            <p class="text-blue-600 font-bold">$<%= number_with_precision(product.price, precision: 2) %></p>
+            <p class="text-sm text-gray-500">Stock: <%= product.stock %></p>
+          </div>
 
+          <%= link_to "View Details", product_path(product), class: "block mt-4 w-full bg-indigo-500 hover:bg-indigo-600 text-white text-center py-2 rounded transition-colors" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
 
+  <!-- Pagination -->
   <div class="mt-6 flex justify-center">
-  <%= paginate @products %>
-</div>
-
+    <%= paginate @products %>
+  </div>
 </div>

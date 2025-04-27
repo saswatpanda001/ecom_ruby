@@ -12,6 +12,7 @@
         <span class="font-medium">Hello, <%= current_user.username %></span>
         <%= link_to "Products", products_path, class: "hover:underline hover:text-yellow-300" %>
         <%= link_to "Cart", cart_path, class: "hover:underline hover:text-yellow-300" %>
+        <%= link_to "Orders", orders_path, class: "hover:underline hover:text-yellow-300" %>
         <%= link_to "Logout", logout_path, method: :delete, data: { turbo_method: :delete }, class: "hover:underline hover:text-red-300" %>
       <% else %>
         <%= link_to "Login", login_path, class: "hover:underline hover:text-green-300" %>

@@ -1,17 +1,18 @@
 class CartsController < ApplicationController
   before_action :initialize_cart
 
-  # Display the cart page
   def show
     @cart_items = session[:cart] || {}
-    @products = Product.where(id: @cart_items.keys.map(&:to_i))  # Ensure keys are integers
+    @products = Product.where(id: @cart_items.keys)
+    # Calculate total price for display
+    @total_price = @products.sum { |p| p.price * @cart_items[p.id.to_s] }
   end
 
-  # Add product to cart
   def add
     product_id = params[:id].to_s
     quantity = params[:quantity].to_i
 
+    session[:cart] ||= {}
     if quantity > 0
       session[:cart][product_id] = session[:cart][product_id].to_i + quantity
       flash[:notice] = "Product added to cart!"
@@ -35,7 +36,7 @@ class CartsController < ApplicationController
       flash[:notice] = "Product removed from cart!"
     end
 
-    redirect_to cart_path
+    redirect_to cart_path, status: :see_other 
   end
 
   # Remove product from cart
@@ -49,7 +50,7 @@ class CartsController < ApplicationController
       flash[:alert] = "Product not found in cart!"
     end
 
-    redirect_to cart_path
+    redirect_to cart_path, status: :see_other 
   end
 
   private

@@ -1,3 +1,4 @@
+<%= render 'layouts/nav2' %>
 <!-- app/views/checkout/new.html.erb -->
 <div class="container mx-auto px-4 py-8">
   <h1 class="text-3xl font-bold mb-6">Checkout</h1>
@@ -53,7 +54,7 @@
     <div class="bg-white p-6 rounded-lg shadow">
       <h2 class="text-xl font-semibold mb-4">Shipping Information</h2>
       
-      <%= form_with model: @order, url: checkout_path, method: :post, local: true do |f| %>
+      <%= form_with model: @order, url: checkout_path, method: :post, local: true, data: { turbo: false } do |f| %>
         <div class="space-y-4">
           
           <!-- Address -->

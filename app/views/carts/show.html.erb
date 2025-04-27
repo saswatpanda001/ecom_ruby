@@ -1,5 +1,4 @@
 <%= render 'layouts/nav2' %>
-
 <div class="container mx-auto p-6">
   <h1 class="text-3xl font-bold mb-4">Shopping Cart</h1>
 
@@ -16,26 +15,26 @@
               </div>
             </div>
 
-            <!-- Update Quantity -->
-            <form action="<%= update_cart_path(product) %>" method="post" class="flex items-center space-x-2 update-form">
-              <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-              <input type="number" name="quantity" value="<%= @cart_items[product.id.to_s] %>" min="1"
-                class="w-16 border p-2 rounded text-center quantity-input"
-                data-price="<%= product.price %>" data-product-id="<%= product.id %>">
-              
-              <p class="text-lg font-semibold text-gray-800">$<span class="item-total"><%= product.price * @cart_items[product.id.to_s] %></span></p>
+            <div class="flex items-center space-x-4">
+              <!-- Update Quantity -->
+              <%= form_with url: update_cart_path(product), method: :post, class: "flex items-center space-x-2 update-form" do |f| %>
+                <%= f.number_field :quantity, value: @cart_items[product.id.to_s], min: 1, 
+                      class: "w-16 border p-2 rounded text-center quantity-input",
+                      data: { price: product.price, product_id: product.id } %>
+                
+                <p class="text-lg font-semibold text-gray-800">
+                  $<span class="item-total"><%= product.price * @cart_items[product.id.to_s] %></span>
+                </p>
 
-              <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Update</button>
-            </form>
+                <%= f.submit "Update", class: "bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700" %>
+              <% end %>
 
-            <!-- Remove Item -->
-            <a href="<%= remove_from_cart_path(product) %>"
-              class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 remove-btn"
-              data-product-id="<%= product.id %>">
-              Remove
-            </a>
-
-
+              <!-- Remove Item -->
+              <%= link_to "Remove", remove_from_cart_path(product), 
+                    method: :delete, 
+                    class: "bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 remove-btn",
+                    data: { product_id: product.id } %>
+            </div>
           </div>
         <% end %>
       </div>
@@ -43,14 +42,12 @@
       <!-- Grand Total -->
       <div class="flex justify-between mt-6 text-xl font-bold">
         <p>Total Amount:</p>
-        <p>$<span id="grand-total">0.00</span></p>
+        <p>$<span id="grand-total"><%= @total_price %></span></p>
       </div>
-
 
       <div class="mt-6 flex justify-end">
         <%= link_to 'Proceed to Checkout', checkout_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
       </div>
-
     </div>
   <% else %>
     <p class="text-gray-500">Your cart is empty.</p>
@@ -58,75 +55,53 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-  function updateTotal() {
-    let grandTotal = 0;
+document.addEventListener("DOMContentLoaded", function() {
+  // Initialize with server-side calculated total
+  let grandTotal = <%= @total_price || 0 %>;
+  document.getElementById("grand-total").textContent = grandTotal.toFixed(2);
 
-    document.querySelectorAll(".update-form").forEach(form => {
-      let quantityInput = form.querySelector(".quantity-input");
-      let itemTotalElement = form.querySelector(".item-total");
-      let price = parseFloat(quantityInput.getAttribute("data-price"));
-      let quantity = parseInt(quantityInput.value) || 1;
-
-      let itemTotal = price * quantity;
-      itemTotalElement.textContent = itemTotal.toFixed(2);
-
-      grandTotal += itemTotal;
-      
-      
+  // Update individual item totals when quantity changes
+  document.querySelectorAll(".quantity-input").forEach(input => {
+    input.addEventListener("input", function() {
+      const price = parseFloat(this.dataset.price);
+      const quantity = parseInt(this.value) || 1;
+      const itemTotal = price * quantity;
+      this.closest('.update-form').querySelector('.item-total').textContent = itemTotal.toFixed(2);
+      updateGrandTotal();
     });
+  });
 
+  // Update grand total
+  function updateGrandTotal() {
+    grandTotal = 0;
+    document.querySelectorAll(".update-form").forEach(form => {
+      const price = parseFloat(form.querySelector(".quantity-input").dataset.price);
+      const quantity = parseInt(form.querySelector(".quantity-input").value) || 1;
+      grandTotal += price * quantity;
+    });
     document.getElementById("grand-total").textContent = grandTotal.toFixed(2);
   }
-  // Update total on page load
-  updateTotal();
 
-
-
-  // Update total when quantity changes
-  document.querySelectorAll(".quantity-input").forEach(input => {
-    input.addEventListener("input", updateTotal);
-  });
-
-  // Prevent zero or negative quantity submission
-  document.querySelectorAll(".update-form").forEach(form => {
-    
-  form.addEventListener("submit", function(event) {
-  let quantityInput = form.querySelector(".quantity-input");
-  let quantity = parseInt(quantityInput.value);
-  
-  if (quantity <= 0) {
-    event.preventDefault();
-    alert("Quantity must be at least 1.");
-  } else {
-    // Optional slight delay to allow server to process if needed
-    setTimeout(() => {
-      window.location.reload();
-    }, 200);
-  }
-});
-
-  });
-
-  // Handle remove button click
+  // Handle remove button clicks
   document.querySelectorAll(".remove-btn").forEach(button => {
-    button.addEventListener("click", function(event) {
-      event.preventDefault();
-
-      let productRow = this.closest("[data-product-id]");
-      let productId = productRow.getAttribute("data-product-id");
-
-      fetch(`/cart/remove/${productId}`, { method: "DELETE" })
-        .then(() => {
-          productRow.remove();  // Remove item from DOM
-          updateTotal();  // Recalculate total
-          window.location.reload();
+    button.addEventListener("click", function(e) {
+      e.preventDefault();
+      if (confirm("Are you sure you want to remove this item?")) {
+        fetch(this.href, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRF-Token': document.querySelector("[name='csrf-token']").content,
+            'Accept': 'application/json'
+          }
         })
-        .catch(error => console.error("Error removing item:", error));
+        .then(response => {
+          if (response.ok) {
+            window.location.reload(); // Full reload to ensure consistency
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      }
     });
   });
 });
-
-
 </script>
-

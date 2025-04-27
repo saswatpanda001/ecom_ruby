@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-    has_secure_password
+ 
   
     # Associations
     belongs_to :province, optional: true

@@ -1,8 +1,11 @@
 class OrdersController < ApplicationController
-  before_action :require_login
+ 
 
   def index
-    @orders = current_user.orders.order(created_at: :desc)
+    @orders = current_user.orders
+                          .includes(:order_items, :province)
+                          .order(created_at: :desc)
+                          .page(params[:page]) # Optional pagination
   end
 
   def show

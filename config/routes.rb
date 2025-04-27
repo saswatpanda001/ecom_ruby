@@ -45,7 +45,7 @@ end
   patch '/admin/pages/:id', to: 'pages#update', as: 'update_page'
 
 
-  resources :orders, only: [:show]
+  resources :orders, only: [:index, :show]  #
   get '/checkout', to: 'checkout#new', as: 'checkout'
   post '/checkout', to: 'checkout#create'
   
