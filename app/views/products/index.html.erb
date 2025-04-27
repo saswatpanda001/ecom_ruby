@@ -1,27 +1,4 @@
-<nav class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md py-4">
-  <div class="container mx-auto flex justify-between items-center px-4">
-    
-    <!-- Logo / Site name -->
-    <div class="text-2xl font-extrabold tracking-wide">
-      <%= link_to "Ecommerce", root_path, class: "hover:text-yellow-300 transition-colors duration-200" %>
-    </div>
-
-    <!-- Navigation Links -->
-    <div class="flex items-center space-x-6 text-sm md:text-base">
-      <% if user_signed_in? %>
-        <span class="font-medium">Hello, <%= current_user.username %></span>
-        <%= link_to "Products", products_path, class: "hover:underline hover:text-yellow-300" %>
-        <%= link_to "Cart", cart_path, class: "hover:underline hover:text-yellow-300" %>
-        <%= link_to "Logout", logout_path, method: :delete, data: { turbo_method: :delete }, class: "hover:underline hover:text-red-300" %>
-      <% else %>
-      <%= link_to "Login", login_path, class: "hover:underline hover:text-green-300" %>
-      <%= link_to "Signup", signup_path, class: "hover:underline hover:text-green-300" %>
-      <%= link_to "About", about_path, class: "hover:underline hover:text-green-300" %>
-      <%= link_to "Home", root_path, class: "hover:underline hover:text-green-300" %>
-      <% end %>
-    </div>
-  </div>
-</nav>
+<%= render 'layouts/nav2' %>
 
 <script>
   document.getElementById('menu-btn').addEventListener('click', function () {
@@ -31,36 +8,69 @@
 
 
 <div class="container mx-auto p-6">
-  <!-- Search & Filter -->
-  <div class="flex justify-between items-center mb-6">
-    <form action="<%= products_path %>" method="get" class="flex space-x-2">
-      <input type="text" name="search" placeholder="Search products..." class="border p-2 rounded w-64" value="<%= params[:search] %>">
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Search</button>
-    </form>
+<!-- Search & Filter -->
+<div class="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
+  <!-- Search -->
+  <form action="<%= products_path %>" method="get" class="flex space-x-2">
+    <input type="text" name="search" placeholder="Search products..." class="border p-2 rounded w-64" value="<%= params[:search] %>">
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Search</button>
+  </form>
 
-    <form action="<%= products_path %>" method="get">
-      <select name="category_id" class="border p-2 rounded" onchange="this.form.submit()">
-        <option value="">All Categories</option>
-        <% @categories.each do |category| %>
-          <option value="<%= category.id %>" <%= 'selected' if params[:category_id].to_i == category.id %>>
-            <%= category.name %>
-          </option>
-        <% end %>
-      </select>
-    </form>
-  </div>
+  <!-- Category Dropdown -->
+  <form action="<%= products_path %>" method="get">
+    <select name="category_id" class="border p-2 rounded" onchange="this.form.submit()">
+      <option value="">All Categories</option>
+      <% @categories.each do |category| %>
+        <option value="<%= category.id %>" <%= 'selected' if params[:category_id].to_i == category.id %>>
+          <%= category.name %>
+        </option>
+      <% end %>
+    </select>
+  </form>
+
+  <!-- On Sale Filter -->
+ <% if params[:on_sale] == "true" %>
+  <!-- Show all products button -->
+  <form action="<%= products_path %>" method="get">
+    <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-all">
+      Show All Products
+    </button>
+  </form>
+<% else %>
+  <!-- Filter on-sale products -->
+  <form action="<%= products_path %>" method="get">
+    <input type="hidden" name="on_sale" value="true">
+    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-all">
+      On Sale Only
+    </button>
+  </form>
+<% end %>
+
+</div>
+
+
 
   <!-- Product Grid -->
   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    <% @products.each do |product| %>
-      <div class="bg-white shadow-lg rounded-lg p-4">
-        <h3 class="text-lg font-semibold"><%= product.title %></h3>
-        <p class="text-gray-600"><%= truncate(product.description, length: 80) %></p>
-        <p class="text-blue-600 font-bold mt-2">$<%= product.price %></p>
-        <a href="<%= product_path(product) %>" class="block mt-4 bg-indigo-500 text-white text-center py-2 rounded">View Details</a>
-      </div>
-    <% end %>
-  </div>
+  <% @products.each do |product| %>
+    <div class="bg-white shadow-lg rounded-lg p-4 relative">
+
+      <% if product.on_sale %>
+        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+          On Sale
+        </span>
+      <% end %>
+
+      <h3 class="text-lg font-semibold"><%= product.title %></h3>
+      <p class="text-gray-600"><%= truncate(product.description, length: 80) %></p>
+      <p class="text-blue-600 font-bold mt-2">$<%= product.price %></p>
+      <a href="<%= product_path(product) %>" class="block mt-4 bg-indigo-500 text-white text-center py-2 rounded">
+        View Details
+      </a>
+    </div>
+  <% end %>
+</div>
+
 
   <div class="mt-6 flex justify-center">
   <%= paginate @products %>

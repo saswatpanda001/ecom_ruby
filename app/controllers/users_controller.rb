@@ -1,5 +1,7 @@
 # app/controllers/users_controller.rb
 class UsersController < ApplicationController
+  before_action :load_provinces, only: [:new, :create]
+
   def new
     @user = User.new
   end
@@ -17,8 +19,12 @@ class UsersController < ApplicationController
 
   private
 
+  def load_provinces
+    @provinces = Province.all.order(:name)
+  end
+
   def user_params
-    params.require(:user).permit(:email, :password, :username)
+    params.require(:user).permit(:email, :password, :username, :province_id)
   end
 
   def redirect_to_route_for(user)

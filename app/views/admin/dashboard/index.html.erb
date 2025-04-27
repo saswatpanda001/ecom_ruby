@@ -1,26 +1,4 @@
-<nav class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md py-4">
-  <div class="container mx-auto flex justify-between items-center px-4">
-    
-    <!-- Logo / Site name -->
-    <div class="text-2xl font-extrabold tracking-wide">
-      <%= link_to "Ecommerce", root_path, class: "hover:text-yellow-300 transition-colors duration-200" %>
-    </div>
-
-    <!-- Navigation Links -->
-    <div class="flex items-center space-x-6 text-sm md:text-base">
-      <% if user_signed_in? %>
-        <span class="font-medium">Hello, <%= current_user.username %></span>
-        <li><%= link_to 'Admin Products', admin_products_path %></li>
-        <li><%= link_to 'Add Product', new_admin_product_path%></li>
-       
-        <%= link_to "Logout", logout_path, method: :delete, data: { turbo_method: :delete }, class: "hover:underline hover:text-red-300" %>
-      <% else %>
-        <%= link_to "Login", login_path, class: "hover:underline hover:text-green-300" %>
-        <%= link_to "Signup", signup_path, class: "hover:underline hover:text-green-300" %>
-      <% end %>
-    </div>
-  </div>
-</nav>
+<%= render 'layouts/nav1' %>
 
 
 <div class="min-h-screen bg-gray-100 py-10 px-4">

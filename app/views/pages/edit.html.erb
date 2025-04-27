@@ -1,0 +1,56 @@
+<%= render 'layouts/nav1' %>
+
+
+<% @pages.each do |page| %>
+  <div class="max-w-3xl mx-auto bg-white shadow-md rounded-xl p-6 mb-10 border border-gray-200 mt-8">
+    <h2 class="text-2xl font-semibold mb-4 text-indigo-700"><%= page.name.capitalize %> Page</h2>
+
+    <%= form_with model: page, url: update_page_path(page), method: :patch, local: true do |form| %>
+
+      <% if page.name == "about" %>
+        <div class="mb-4">
+          <%= form.label :about_us, class: "block font-medium mb-1 text-gray-700" %>
+          <%= form.text_area :about_us, class: "w-full border border-gray-300 rounded-lg p-3", rows: 3 %>
+        </div>
+
+        <div class="mb-4">
+          <%= form.label :our_story, class: "block font-medium mb-1 text-gray-700" %>
+          <%= form.text_area :our_story, class: "w-full border border-gray-300 rounded-lg p-3", rows: 3 %>
+        </div>
+
+        <div class="mb-4">
+          <%= form.label :mission, class: "block font-medium mb-1 text-gray-700" %>
+          <%= form.text_area :mission, class: "w-full border border-gray-300 rounded-lg p-3", rows: 2 %>
+        </div>
+
+        <div class="mb-4">
+          <%= form.label :values, class: "block font-medium mb-1 text-gray-700" %>
+          <%= form.text_area :values, class: "w-full border border-gray-300 rounded-lg p-3", rows: 2 %>
+        </div>
+
+      <% elsif page.name == "contact" %>
+        <div class="mb-4">
+          <%= form.label :phone, class: "block font-medium mb-1 text-gray-700" %>
+          <%= form.text_field :phone, class: "w-full border border-gray-300 rounded-lg p-3" %>
+        </div>
+
+        <div class="mb-4">
+          <%= form.label :email, class: "block font-medium mb-1 text-gray-700" %>
+          <%= form.text_field :email, class: "w-full border border-gray-300 rounded-lg p-3" %>
+        </div>
+
+        <div class="mb-4">
+          <%= form.label :instagram, class: "block font-medium mb-1 text-gray-700" %>
+          <%= form.text_field :instagram, class: "w-full border border-gray-300 rounded-lg p-3" %>
+        </div>
+
+        <div class="mb-4">
+          <%= form.label :address, class: "block font-medium mb-1 text-gray-700" %>
+          <%= form.text_field :address, class: "w-full border border-gray-300 rounded-lg p-3" %>
+        </div>
+      <% end %>
+
+      <%= form.submit "Update #{page.name.capitalize} Page", class: "mt-4 bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition" %>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,102 @@
+<!-- app/views/checkout/new.html.erb -->
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6">Checkout</h1>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- Order Summary -->
+    <div class="bg-white p-6 rounded-lg shadow">
+      <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+      
+      <% @products.each do |product| %>
+        <div class="flex justify-between py-4 border-b">
+          <div>
+            <h3 class="font-medium"><%= product.title %></h3>
+            <p class="text-gray-600">Quantity: <%= @cart_items[product.id.to_s] %></p>
+          </div>
+          <div class="text-right">
+            <p><%= number_to_currency(product.price * @cart_items[product.id.to_s].to_i) %></p>
+          </div>
+        </div>
+      <% end %>
+      
+      <div class="mt-6 space-y-2">
+        <div class="flex justify-between">
+          <span>Subtotal:</span>
+          <span><%= number_to_currency(@subtotal) %></span>
+        </div>
+        <% if @gst_amount > 0 %>
+          <div class="flex justify-between">
+            <span>GST (<%= current_user.province.gst %>%):</span>
+            <span><%= number_to_currency(@gst_amount) %></span>
+          </div>
+        <% end %>
+        <% if @pst_amount > 0 %>
+          <div class="flex justify-between">
+            <span>PST (<%= current_user.province.pst %>%):</span>
+            <span><%= number_to_currency(@pst_amount) %></span>
+          </div>
+        <% end %>
+        <% if @hst_amount > 0 %>
+          <div class="flex justify-between">
+            <span>HST (<%= current_user.province.hst %>%):</span>
+            <span><%= number_to_currency(@hst_amount) %></span>
+          </div>
+        <% end %>
+        <div class="flex justify-between font-bold text-lg pt-2 border-t">
+          <span>Total:</span>
+          <span><%= number_to_currency(@total) %></span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Checkout Form -->
+    <div class="bg-white p-6 rounded-lg shadow">
+      <h2 class="text-xl font-semibold mb-4">Shipping Information</h2>
+      
+      <%= form_with model: @order, url: checkout_path, method: :post, local: true do |f| %>
+        <div class="space-y-4">
+          
+          <!-- Address -->
+          <div>
+            <%= f.label :address, "Street Address", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.text_field :address, required: true, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+          </div>
+      
+          <!-- City -->
+          <div>
+            <%= f.label :city, "City", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.text_field :city, required: true, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+          </div>
+      
+          <!-- Postal Code -->
+          <div>
+            <%= f.label :postal_code, "Postal Code", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.text_field :postal_code, required: true, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+          </div>
+      
+          <!-- Province (Display only) -->
+          <div>
+            <%= f.label :province, "Province", class: "block text-sm font-medium text-gray-700" %>
+            <p class="mt-1 text-gray-900"><%= current_user.province.name if current_user.province %></p>
+          </div>
+      
+          <!-- Payment Method -->
+          <div>
+            <%= f.label :payment_method, "Payment Method", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.select :payment_method, 
+                options_for_select(['Credit Card', 'PayPal', 'Bank Transfer'], @order.payment_method), 
+                { include_blank: 'Select payment method' }, 
+                { required: true, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" } %>
+          </div>
+      
+          <!-- Submit Button -->
+          <div class="pt-4">
+            <%= f.submit "Place Order", class: "w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+          </div>
+      
+        </div>
+      <% end %>
+      
+    </div>
+  </div>
+</div>

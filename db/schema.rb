@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_11_182939) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_27_144643) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -77,8 +77,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_11_182939) do
     t.bigint "province_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "address"
+    t.string "city"
+    t.string "postal_code"
+    t.string "payment_method"
     t.index ["province_id"], name: "index_orders_on_province_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "pages", force: :cascade do |t|
+    t.string "name"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "about_us"
+    t.text "our_story"
+    t.text "mission"
+    t.text "values"
+    t.string "phone"
+    t.string "email"
+    t.string "instagram"
+    t.string "address"
   end
 
   create_table "products", force: :cascade do |t|
@@ -87,7 +106,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_11_182939) do
     t.decimal "price"
     t.boolean "on_sale"
     t.bigint "category_id", null: false
-    t.string "image"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "stock"

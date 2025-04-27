@@ -1,27 +1,4 @@
-<nav class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md py-4">
-  <div class="container mx-auto flex justify-between items-center px-4">
-    
-    <!-- Logo / Site name -->
-    <div class="text-2xl font-extrabold tracking-wide">
-      <%= link_to "Ecommerce", root_path, class: "hover:text-yellow-300 transition-colors duration-200" %>
-    </div>
-
-    <!-- Navigation Links -->
-    <div class="flex items-center space-x-6 text-sm md:text-base">
-      <% if user_signed_in? %>
-        <span class="font-medium">Hello, <%= current_user.username %></span>
-        <%= link_to "Products", products_path, class: "hover:underline hover:text-yellow-300" %>
-        <%= link_to "Cart", cart_path, class: "hover:underline hover:text-yellow-300" %>
-        <%= link_to "Logout", logout_path, method: :delete, data: { turbo_method: :delete }, class: "hover:underline hover:text-red-300" %>
-      <% else %>
-      <%= link_to "Login", login_path, class: "hover:underline hover:text-green-300" %>
-      <%= link_to "Signup", signup_path, class: "hover:underline hover:text-green-300" %>
-      <%= link_to "About", about_path, class: "hover:underline hover:text-green-300" %>
-      <%= link_to "Home", root_path, class: "hover:underline hover:text-green-300" %>
-      <% end %>
-    </div>
-  </div>
-</nav>
+<%= render 'layouts/nav2' %>
 <script>
   document.getElementById('menu-btn').addEventListener('click', function () {
     document.getElementById('mobile-menu').classList.toggle('hidden');
@@ -32,10 +9,16 @@
 <div class="container mx-auto p-6">
   <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
     
-    <!-- Product Info -->
-    <h1 class="text-3xl font-bold"><%= @product.title %></h1>
-    <p class="text-gray-600 mt-2"><%= @product.description %></p>
-    <p class="text-green-600 font-bold text-xl mt-4">$<%= @product.price %></p>
+  <!-- Product Info -->
+  <h1 class="text-3xl font-bold"><%= @product.title %></h1>
+  <p class="text-gray-600 mt-2"><%= @product.description %></p>
+  <p class="text-green-600 font-bold text-xl mt-4">$<%= @product.price %></p>
+  
+  <% if @product.on_sale %>
+    <p class="text-red-500 font-semibold mt-2">🔥 On Sale!</p>
+  <% else %>
+    <p class="text-gray-500 mt-2">Not on Sale</p>
+  <% end %>
     
     <!-- Quantity Selector & Add to Cart -->
     <form action="<%= add_to_cart_path(@product) %>" method="post" class="mt-6 flex space-x-2">

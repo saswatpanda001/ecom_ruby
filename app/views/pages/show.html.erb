@@ -1,0 +1,14 @@
+<%= render 'layouts/nav2' %>
+
+<% if @page.name == "about" %>
+  <%= render 'about_page', page: @page %>
+<% elsif @page.name == "contact" %>
+  <%= render 'contact_page', page: @page %>
+<% else %>
+  <div class="max-w-3xl mx-auto mt-10 p-6 bg-white shadow rounded">
+    <h1 class="text-2xl font-bold mb-4"><%= @page.name.capitalize %> Page</h1>
+    <div class="prose">
+      <%= simple_format(@page.content) %>
+    </div>
+  </div>
+<% end %>

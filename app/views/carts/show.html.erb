@@ -1,27 +1,4 @@
-<nav class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md py-4">
-  <div class="container mx-auto flex justify-between items-center px-4">
-    
-    <!-- Logo / Site name -->
-    <div class="text-2xl font-extrabold tracking-wide">
-      <%= link_to "Ecommerce", root_path, class: "hover:text-yellow-300 transition-colors duration-200" %>
-    </div>
-
-    <!-- Navigation Links -->
-    <div class="flex items-center space-x-6 text-sm md:text-base">
-      <% if user_signed_in? %>
-        <span class="font-medium">Hello, <%= current_user.username %></span>
-        <%= link_to "Products", products_path, class: "hover:underline hover:text-yellow-300" %>
-        <%= link_to "Cart", cart_path, class: "hover:underline hover:text-yellow-300" %>
-        <%= link_to "Logout", logout_path, method: :delete, data: { turbo_method: :delete }, class: "hover:underline hover:text-red-300" %>
-      <% else %>
-      <%= link_to "Login", login_path, class: "hover:underline hover:text-green-300" %>
-<%= link_to "Signup", signup_path, class: "hover:underline hover:text-green-300" %>
-<%= link_to "About", about_path, class: "hover:underline hover:text-green-300" %>
-<%= link_to "Home", home_path, class: "hover:underline hover:text-green-300" %>
-      <% end %>
-    </div>
-  </div>
-</nav>
+<%= render 'layouts/nav2' %>
 
 <div class="container mx-auto p-6">
   <h1 class="text-3xl font-bold mb-4">Shopping Cart</h1>
@@ -69,10 +46,11 @@
         <p>$<span id="grand-total">0.00</span></p>
       </div>
 
-      <!-- Checkout Button -->
+
       <div class="mt-6 flex justify-end">
-        <a href="/checkout" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">Checkout</a>
+        <%= link_to 'Proceed to Checkout', checkout_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
       </div>
+
     </div>
   <% else %>
     <p class="text-gray-500">Your cart is empty.</p>

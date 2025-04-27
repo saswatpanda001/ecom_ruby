@@ -1,0 +1,23 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6">My Orders</h1>
+
+  <% if @orders.any? %>
+    <div class="space-y-4">
+      <% @orders.each do |order| %>
+        <div class="p-6 bg-white rounded-lg shadow flex justify-between items-center">
+          <div>
+            <p><strong>Order ID:</strong> <%= order.id %></p>
+            <p><strong>Status:</strong> <%= order.status %></p>
+            <p><strong>Total:</strong> <%= number_to_currency(order.total_price) %></p>
+            <p><strong>Placed on:</strong> <%= order.created_at.strftime("%B %d, %Y") %></p>
+          </div>
+          <div>
+            <%= link_to "View Order", order_path(order), class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p>You have not placed any orders yet.</p>
+  <% end %>
+</div>
